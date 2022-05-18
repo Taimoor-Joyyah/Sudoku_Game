@@ -1,21 +1,18 @@
-# frames: solution frame, mask frame, playable mask frame, view frame
-# map sizes: 2,3,4 // for 4x4 use 123456789ABCDEFG
-# playable with console_play class
 import random
 
 
 class Sudoku:
-    def __init__(self, map_size):
+    def __init__(self, map_size=3, difficulty=4):
         self.map_size: int = map_size  # temp 2
-        self.solution_map = [[1, 2, 3, 4],
-                             [4, 3, 2, 1],
-                             [3, 4, 1, 2],
-                             [2, 1, 4, 3]]
-        self.mask_frame = [[0, 0, 1, 1],
-                           [0, 1, 0, 1],
-                           [1, 1, 0, 0],
-                           [1, 0, 1, 0]]
+        self.difficulty = difficulty
+        self.solution_map = None
+        self.view_frame = None
+        self.playable_frame = None
+        self.mask_frame = None
 
+    def generate_maps(self):
+        self.solution_map = self.generate_solution()
+        self.mask_frame = self.generate_mask()
         self.playable_frame = [[0 if c else 1 for c in r] for r in self.mask_frame]
         self.view_frame = [[c if self.mask_frame[ri][ci] else 0 for ci, c in enumerate(r)]
                            for ri, r in enumerate(self.solution_map)]
@@ -43,14 +40,21 @@ class Sudoku:
                         return False
             return True
 
-    def valid_frame(self, frame):
+    @staticmethod
+    def valid_frame(frame):
         for row in frame:
             for cell in row:
                 if cell == 0:
                     return False
         return True
 
-    def generate_map(self):
+    def generate_mask(self):
+        frame = []
+        for i in range(self.map_size ** 2):
+            frame.append(random.choices([0, 1], weights=[4, 1], k=3 ** 2))
+        return frame
+
+    def generate_solution(self):
         range_list = list(range(1, (self.map_size ** 2) + 1))
         for force1 in range(64):
             frame = [[0 for b in range(self.map_size ** 2)] for a in range(self.map_size ** 2)]
@@ -76,7 +80,8 @@ class Sudoku:
         else:
             return None
 
-    def hex_print(self, value):
+    @staticmethod
+    def hex_print(value):
         if value < 10:
             return value
         else:
@@ -100,3 +105,15 @@ class Sudoku:
             for cell in row:
                 print(self.hex_print(cell), end="  ")
             print()
+
+    pass
+# """ !@#$%^&*()_+}{":<>?|\/.,';][.+-*/ """
+# """
+# +--------+--------+
+# |  1  2  |  3  4  |
+# |  5  6  |  7  8  |
+# |--------+--------|
+# |  9  0  |  1  2  |
+# |  3  4  |  5  6  |
+# +--------+--------+
+# """
