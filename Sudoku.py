@@ -5,10 +5,6 @@ class Sudoku:
     def __init__(self, map_size=3, difficulty=4):
         self.map_size: int = map_size  # temp 2
         self.difficulty = difficulty
-        self.solution_map = None
-        self.view_frame = None
-        self.playable_frame = None
-        self.mask_frame = None
 
     def generate_maps(self):
         self.solution_map = self.generate_solution()
@@ -51,15 +47,15 @@ class Sudoku:
     def generate_mask(self):
         frame = []
         for i in range(self.map_size ** 2):
-            frame.append(random.choices([0, 1], weights=[4, 1], k=3 ** 2))
+            frame.append(random.choices([0, 1], weights=[self.difficulty, 1], k=self.map_size ** 2))
         return frame
 
     def generate_solution(self):
         range_list = list(range(1, (self.map_size ** 2) + 1))
-        for force1 in range(64):
+        for force1 in range(50):
             frame = [[0 for b in range(self.map_size ** 2)] for a in range(self.map_size ** 2)]
             for ri, row in enumerate(frame):
-                for force2 in range(1024):
+                for force2 in range(100):
                     for ci, cell in enumerate(row):
                         random.shuffle(range_list)
                         for value in range_list:
@@ -76,45 +72,7 @@ class Sudoku:
                     break
             else:
                 if self.valid_frame(frame):
+                    # print(force1)
                     return frame
         else:
             return None
-
-    @staticmethod
-    def hex_print(value):
-        if value < 10:
-            return value
-        else:
-            if value == 10:
-                return 'A'
-            if value == 11:
-                return 'B'
-            if value == 12:
-                return 'C'
-            if value == 13:
-                return 'D'
-            if value == 14:
-                return 'E'
-            if value == 15:
-                return 'F'
-            if value == 16:
-                return 'G'
-
-    def display_frame(self, frame):
-        for row in frame:
-            for cell in row:
-                print(self.hex_print(cell), end="  ")
-            print()
-
-    pass
-# """ !@#$%^&*()_+}{":<>?|\/.,';][.+-*/ """
-# """
-#        0  1     2  3
-#    +---------+---------+
-# 0- ||  1  2  |  3  4  ||
-# 1- ||  5  6  |  7  8  ||
-#    ||--------+--------||
-# 2- ||  9  0  |  1  2  ||
-# 3- ||  3  4  |  5  6  ||
-#    +---------+---------+
-# """
