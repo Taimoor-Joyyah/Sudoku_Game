@@ -1,4 +1,5 @@
 from Sudoku import *
+from userdefined import *
 
 
 class ConsolePlay:
@@ -7,20 +8,14 @@ class ConsolePlay:
 
     @staticmethod
     def menu():
-        print("""
+        menu_prompt = """
         1. Play Game
         2. Select Random Map
         3. Create Map
         4. Options
         5. Exit
-        """)
-
-        while True:
-            option = input("OPTION > ")
-            if option and option.isnumeric() and 1 <= int(option) <= 5:
-                return int(option)
-            else:
-                print("INVALID OPTION !!!")
+        """
+        return select_numeric_option((1, 5), "OPTION > ", menu_prompt, "INVALID OPTION !!!")
 
     def play(self):
         print("Playing")
@@ -64,36 +59,20 @@ class ConsolePlay:
                 return False
 
     def options(self):
-        print("""
+        menu_prompt = """
         1. Set Map Size
         2. Set Difficulty
         3. Back to Menu
-                """)
+                """
+        option = select_numeric_option((1, 3), "OPTION > ", menu_prompt, "INVALID OPTION !!!")
 
-        while True:
-            option = input("OPTION > ")
-            if option and option.isnumeric() and 1 <= int(option) <= 3:
-                break
-            else:
-                print("INVALID OPTION !!!")
-
-        if option == '1':
-            while True:
-                value = input("Enter Map Size > ")
-                if value and value.isnumeric() and 2 <= int(value) <= 4:
-                    self.game.set_map_size(int(value))
-                    break
-                else:
-                    print("Enter Map size between 2 and 4 (default 3)")
-        elif option == '2':
-            while True:
-                value = input("Enter Difficulty > ")
-                if value and value.isnumeric() and 1 <= int(value) <= 5:
-                    self.game.set_difficulty(int(value))
-                    break
-                else:
-                    print("Enter Difficulty between 1 and 8 (default 4)")
-        elif option == '3':
+        if option == 1:
+            self.game.set_map_size(select_numeric_option((2, 4), "Enter Map Size > ",
+                                                         None, "Enter Map size between 2 and 4 (default 3)"))
+        elif option == 2:
+            self.game.set_difficulty(select_numeric_option((1, 8), "Enter Difficulty > ",
+                                                           None, "Enter Difficulty between 1 and 8 (default 4)"))
+        elif option == 3:
             print("Back to Menu...")
 
     def display_frame(self, frame):
