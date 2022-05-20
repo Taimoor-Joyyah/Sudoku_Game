@@ -13,5 +13,3 @@ while True:
         game.options()
     elif option == 5:
         game.exit()
-
-# ..7..*... * is selected

@@ -55,13 +55,45 @@ class ConsolePlay:
                 print("INVALID INPUT !!!")
 
     def play(self):
-        while self.game.view_frame != self.game.solution_map:
-            cell = self.select_cell()
-            value = self.select_value()
-            if self.game.input_value(cell, value):
+        cell = value = None
+        while True:
+            menu_prompt = """
+            1. Select Cell
+            2. Select Value
+            3. Input Value
+            4. Empty Cell
+            5. Leave Game 
+            """
+
+            option = select_numeric_option((1, 5), "OPTION > ", menu_prompt, "INVALID INPUT !!!")
+
+            if option == 1:
+                cell = self.select_cell()
                 self.display_frame(self.game.view_frame)
-            else:
-                print(f"{value} does not statisfy at {cell} !!!")
+            elif option == 2:
+                value = self.select_value()
+                self.display_frame(self.game.view_frame)
+            elif option == 3:
+                if cell is None:
+                    print("CELL NOT SELECTED !!!")
+                elif value is None:
+                    print("VALUE NOT SELECTED !!!")
+                elif self.game.input_value(cell, value):
+                    print(f"Taken {value} at {cell}")
+                    self.display_frame(self.game.view_frame)
+                    if self.game.view_frame == self.game.solution_map:
+                        break
+                else:
+                    print(f"{value} does not statisfy at {cell} !!!")
+            elif option == 4:
+                if cell is None:
+                    print("CELL NOT SELECTED !!!")
+                else:
+                    self.game.empty_cell(cell)
+                    self.display_frame(self.game.view_frame)
+            elif option == 5:
+                print("Leaving Game...")
+                return
         print("Game WON")
 
     def create_map(self):
@@ -80,9 +112,9 @@ class ConsolePlay:
             self.display_frame(self.game.view_frame)
 
             print("""
-            1- Select and Play
-            2- Next Map
-            3- Back to Menu
+            1. Select and Play
+            2. Next Map
+            3. Back to Menu
             """)
 
             while True:

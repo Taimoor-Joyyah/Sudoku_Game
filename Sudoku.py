@@ -8,9 +8,10 @@ class Sudoku:
 
     def generate_maps(self):
         self.solution_map = self.generate_solution()
-        self.mask_frame = self.generate_mask()
-        self.playable_frame = [[0 if c else 1 for c in r] for r in self.mask_frame]
-        self.view_frame = [[c if self.mask_frame[ri][ci] else 0 for ci, c in enumerate(r)]
+        self.mask_solution = self.generate_mask()
+        self.view_mask = [[b for b in a] for a in self.mask_solution]
+        self.playable_frame = [[0 if c else 1 for c in r] for r in self.mask_solution]
+        self.view_frame = [[c if self.mask_solution[ri][ci] else 0 for ci, c in enumerate(r)]
                            for ri, r in enumerate(self.solution_map)]
 
     def box_frame(self, frame):
@@ -21,8 +22,8 @@ class Sudoku:
                 box_Frame[ri // self.map_size][ci // self.map_size][ri % self.map_size][ci % self.map_size] = cell
         return box_Frame
 
-    def rules_check(self, frame, position, value):
-        if frame[position[0]][position[1]] == 0:
+    def rules_check(self, frame, position, value, gen=False):
+        if gen or self.playable_frame[position[0]][position[1]]:
             for cell in frame[position[0]]:
                 if cell == value:
                     return False
@@ -54,9 +55,15 @@ class Sudoku:
     def input_value(self, cell, value):
         if self.rules_check(self.view_frame, cell, value):
             self.view_frame[cell[0]][cell[1]] = value
+            self.view_mask[cell[0]][cell[1]] = 1
             return True
         else:
             return False
+
+    def empty_cell(self, cell):
+        if self.playable_frame[cell[0]][cell[1]]:
+            self.view_frame[cell[0]][cell[1]] = 0
+            self.view_mask[cell[0]][cell[1]] = 0
 
     def generate_mask(self):
         frame = []
@@ -79,7 +86,7 @@ class Sudoku:
                     for ci, cell in enumerate(row):
                         random.shuffle(range_list)
                         for value in range_list:
-                            if self.rules_check(frame, (ri, ci), value):
+                            if self.rules_check(frame, (ri, ci), value, True):
                                 frame[ri][ci] = value
                                 break
                         else:
