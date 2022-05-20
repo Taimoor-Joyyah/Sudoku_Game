@@ -1,8 +1,9 @@
 from Sudoku import *
 
+
 class ConsolePlay:
-    def __init__(self, map_size=3, difficulty=4):
-        self.game = Sudoku(map_size, difficulty)
+    def __init__(self):
+        self.game = Sudoku()
 
     @staticmethod
     def menu():
@@ -21,42 +22,87 @@ class ConsolePlay:
             else:
                 print("INVALID OPTION !!!")
 
-    def play_game(self, select=False):
+    def play(self):
+        print("Playing")
+        pass
+
+    def start_game(self, select=False):
         self.game.generate_maps()
         if select:
-            self.select_map()
-        else:
-            self.display_frame(self.game.view_frame)
-        # Play
+            if not self.select_map():
+                return
+        self.display_frame(self.game.view_frame)
+        self.play()
 
     def select_map(self):
         while True:
             self.display_frame(self.game.view_frame)
 
-            while True:
-                option = input("Enter 'N' for NEXT or 'P' to Play > ")
+            print("""
+            1- Select and Play
+            2- Next Map
+            3- Back to Menu
+            """)
 
-                if option and (option.upper() == 'N' or option.upper() == 'P'):
+            while True:
+                option = input("OPTION > ")
+
+                if option and option.isnumeric() and 1 <= int(option) <= 4:
                     break
                 else:
-                    print("INVALID OPTION !!!")
+                    print("INVALID OPTION!!!")
 
-            if option.upper() == 'P':
-                break
-            else:
+            if option == '1':
+                return True
+            elif option == '2':
                 print("NEXT MAP...")
                 self.game.generate_maps()
+            elif option == '3':
+                print("Back to Menu...")
+                return False
 
-    @staticmethod
-    def hex_print(value, k=False):
-        if k and value == 0:
-            return "."
-        elif value < 10:
-            return value
-        else:
-            return ['A', 'B', 'C', 'D', 'E', 'F', 'G'][value - 10]
+    def options(self):
+        print("""
+                1. Set Map Size
+                2. Set Difficulty
+                3. Back to Menu
+                """)
+
+        while True:
+            option = input("OPTION > ")
+            if option and option.isnumeric() and 1 <= int(option) <= 3:
+                break
+            else:
+                print("INVALID OPTION !!!")
+
+        if option == '1':
+            while True:
+                value = input("Enter Map Size > ")
+                if value and value.isnumeric() and 2 <= int(value) <= 4:
+                    self.game.set_map_size(int(value))
+                    break
+                else:
+                    print("Enter Map size between 2 and 4 (default 3)")
+        elif option == '2':
+            while True:
+                value = input("Enter Difficulty > ")
+                if value and value.isnumeric() and 1 <= int(value) <= 5:
+                    self.game.set_difficulty(int(value))
+                    break
+                else:
+                    print("Enter Difficulty between 1 and 8 (default 4)")
+        elif option == '3':
+            print("Back to Menu...")
 
     def display_frame(self, frame):
+        def hex_print(value, k=False):
+            if k and value == 0:
+                return "."
+            elif value < 10:
+                return value
+            else:
+                return ['A', 'B', 'C', 'D', 'E', 'F', '0'][value - 10]
+
         def borders():
             for n in range(self.game.map_size):
                 if not n:
@@ -69,7 +115,7 @@ class ConsolePlay:
                 print("       ", end="")
             if i and not i % self.game.map_size:
                 print("   ", end="")
-            print(self.hex_print(i), end="  ")
+            print(hex_print(i), end="  ")
         print("")
 
         borders()
@@ -83,12 +129,12 @@ class ConsolePlay:
                         print("   ", end="||")
                     print("-" * (self.game.map_size * 3 + 2), end="")
                 print("||")
-            print(f"{self.hex_print(ri)}- ||", end="  ")
+            print(f"{hex_print(ri)}- ||", end="  ")
 
             for ci, cell in enumerate(row):
                 if ci and not ci % self.game.map_size:
                     print("|", end="  ")
-                print(self.hex_print(cell, True), end="  ")
+                print(hex_print(cell, True), end="  ")
             print("||")
 
         borders()

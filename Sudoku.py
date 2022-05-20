@@ -2,9 +2,9 @@ import random
 
 
 class Sudoku:
-    def __init__(self, map_size=3, difficulty=4):
-        self.map_size: int = map_size  # temp 2
-        self.difficulty = difficulty
+    def __init__(self):
+        self.map_size = 3
+        self.difficulty = 4
 
     def generate_maps(self):
         self.solution_map = self.generate_solution()
@@ -50,6 +50,12 @@ class Sudoku:
             frame.append(random.choices([0, 1], weights=[self.difficulty, 1], k=self.map_size ** 2))
         return frame
 
+    def set_difficulty(self, difficulty):
+        self.difficulty = difficulty
+
+    def set_map_size(self, map_size):
+        self.map_size = map_size
+
     def generate_solution(self):
         range_list = list(range(1, (self.map_size ** 2) + 1))
         for force1 in range(50):
@@ -72,7 +78,6 @@ class Sudoku:
                     break
             else:
                 if self.valid_frame(frame):
-                    # print(force1)
                     return frame
         else:
             return None
