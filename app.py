@@ -8,7 +8,7 @@ while True:
     elif option == 2:
         game.start_game(True)
     elif option == 3:
-        pass  # create map
+        game.create_map()
     elif option == 4:
         game.options()
     elif option == 5:
