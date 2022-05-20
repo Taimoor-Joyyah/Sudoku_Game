@@ -1,5 +1,5 @@
 from Sudoku import *
-from userdefined import *
+from userdefined import select_numeric_option
 
 
 class ConsolePlay:
