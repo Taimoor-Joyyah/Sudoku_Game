@@ -17,8 +17,52 @@ class ConsolePlay:
         """
         return select_numeric_option((1, 5), "OPTION > ", menu_prompt, "INVALID OPTION !!!")
 
+    @staticmethod
+    def hex_dec(value: str, v=False):
+        if v and value == '0':
+            return 16
+        arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
+        if value in arr:
+            return arr.index(value)
+        else:
+            return -1
+
+    def select_cell(self):
+        while True:
+            c = input("Select Cell > ").upper()
+            if c and len(c) == 2 and c.isalnum():
+                a, b = self.hex_dec(c[0]), self.hex_dec(c[1])
+                if a != -1 or b != -1:
+                    if self.game.valid_cell((a, b)):
+                        return a, b
+                    else:
+                        print("THIS CELL CANNOT BE SELECTED !!!")
+                else:
+                    print("INVALID CELL INPUT !!!")
+            else:
+                print("INVALID INPUT !!!")
+
+    def select_value(self):
+        while True:
+            v = input("Select Value > ").upper()
+            if v and len(v) == 1 and v.isalnum():
+                a = self.hex_dec(v, True)
+                if a and self.game.valid_value(a):
+                    return a
+                else:
+                    print("INVALID VALUE INPUT !!!")
+            else:
+                print("INVALID INPUT !!!")
+
     def play(self):
-        print("Playing")
+        while self.game.view_frame != self.game.solution_map:
+            cell = self.select_cell()
+            value = self.select_value()
+            if self.game.input_value(cell, value):
+                self.display_frame(self.game.view_frame)
+            else:
+                print(f"{value} does not statisfy at {cell} !!!")
+        print("Game WON")
 
     def create_map(self):
         print("Creating Map")

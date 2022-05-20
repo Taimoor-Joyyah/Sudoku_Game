@@ -27,3 +27,20 @@ def select_numeric_option(num_range: (int, int), input_prompt: str | None,
         else:
             if invalid_prompt:
                 print(invalid_prompt)
+
+
+# 2x3x4 = 6x4 = 24
+def list_composition(llist: [[[...]]], r_size: tuple):
+    def depth(l, s=None):
+        if s is None:
+            s = []
+        if isinstance(l, list):
+            s.append(len(l))
+            if len(l):
+                return depth(l[0], s)
+            else:
+                return tuple(s)
+        else:
+            return tuple(s)
+
+    return depth(llist)

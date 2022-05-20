@@ -44,6 +44,20 @@ class Sudoku:
                     return False
         return True
 
+    def valid_cell(self, cell: tuple):
+        return (cell[0] < self.map_size ** 2 and
+                cell[1] < self.map_size ** 2) and self.playable_frame[cell[0]][cell[1]]
+
+    def valid_value(self, value):
+        return 1 <= value <= self.map_size ** 2
+
+    def input_value(self, cell, value):
+        if self.rules_check(self.view_frame, cell, value):
+            self.view_frame[cell[0]][cell[1]] = value
+            return True
+        else:
+            return False
+
     def generate_mask(self):
         frame = []
         for i in range(self.map_size ** 2):
