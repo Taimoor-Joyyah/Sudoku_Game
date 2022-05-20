@@ -24,7 +24,9 @@ class ConsolePlay:
 
     def play(self):
         print("Playing")
-        pass
+
+    def create_map(self):
+        print("Creating Map")
 
     def start_game(self, select=False):
         self.game.generate_maps()
@@ -63,9 +65,9 @@ class ConsolePlay:
 
     def options(self):
         print("""
-                1. Set Map Size
-                2. Set Difficulty
-                3. Back to Menu
+        1. Set Map Size
+        2. Set Difficulty
+        3. Back to Menu
                 """)
 
         while True:
