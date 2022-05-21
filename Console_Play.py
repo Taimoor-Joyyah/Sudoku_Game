@@ -223,6 +223,6 @@ class ConsolePlay:
         borders()
 
     @staticmethod
-    def exit():
+    def Exit():
         print("EXITING...")
         exit(1)

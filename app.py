@@ -10,4 +10,4 @@ while True:
     elif option == 3:
         game.options()
     elif option == 4:
-        game.exit()
+        game.Exit()
