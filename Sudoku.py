@@ -52,7 +52,21 @@ class Sudoku:
     def valid_value(self, value):
         return 1 <= value <= self.map_size ** 2
 
-    def input_value(self, cell, value):
+    def selected_cell_map(self, cell):
+        self.scell_map = [[0 for b in range(self.map_size ** 2)] for a in range(self.map_size ** 2)]
+
+        for ci in range(self.map_size ** 2):
+            self.scell_map[cell[0]][ci] = 1
+        for ri in range(self.map_size ** 2):
+            self.scell_map[ri][cell[1]] = 1
+        rm, cm = cell[0] // self.map_size, cell[1] // self.map_size
+        for r in range(rm * self.map_size, (rm + 1) * self.map_size):
+            for c in range(cm * self.map_size, (cm + 1) * self.map_size):
+                self.scell_map[r][c] = 1
+
+    def input_value(self, cell, value, cs):
+        if cs:
+            self.empty_cell(cell)
         if self.rules_check(self.view_frame, cell, value):
             self.view_frame[cell[0]][cell[1]] = value
             self.view_mask[cell[0]][cell[1]] = 1

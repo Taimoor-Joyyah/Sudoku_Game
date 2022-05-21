@@ -58,12 +58,12 @@ class ConsolePlay:
         print(f"Cell: {cell}, Value: {value}, Hints: {hint}, Life: {life}")
 
     def play(self):
-        cell = value = option = None
+        cell = value = option = cs = None
         hints_rem = (3 - self.game.difficulty // 3) * (self.game.map_size - 1)
         lives = (3 - self.game.difficulty // 3) * (self.game.map_size - 1)
         while True:
             if option is not None:
-                self.display_frame(self.game.view_frame)
+                self.display_frame(self.game.view_frame, cell)
                 self.print_state(cell, value, hints_rem, lives)
 
             menu_prompt = f"""
@@ -76,9 +76,10 @@ class ConsolePlay:
             """
 
             option = select_numeric_option((1, 6), "OPTION > ", menu_prompt, "INVALID INPUT !!!")
-
             if option == 1:
                 cell = self.select_cell()
+                self.game.selected_cell_map(cell)
+                cs = False
             elif option == 2:
                 value = self.select_value()
             elif option == 3:
@@ -86,11 +87,12 @@ class ConsolePlay:
                     print("CELL NOT SELECTED !!!")
                 elif value is None:
                     print("VALUE NOT SELECTED !!!")
-                elif self.game.input_value(cell, value):
+                elif self.game.input_value(cell, value, cs):
                     print(f"Taken {value} at {cell}")
-                    self.display_frame(self.game.view_frame)
-                    self.print_state(cell, value, hints_rem, lives)
+                    cs = True
                     if self.game.view_frame == self.game.solution_map:
+                        self.display_frame(self.game.view_frame, None)
+                        self.print_state(cell, value, hints_rem, lives)
                         break
                 else:
                     print(f"{value} does not statisfy at {cell} !!!")
@@ -125,12 +127,12 @@ class ConsolePlay:
         if select:
             if not self.select_map():
                 return
-        self.display_frame(self.game.view_frame)
+        self.display_frame(self.game.view_frame, None)
         self.play()
 
     def select_map(self):
         while True:
-            self.display_frame(self.game.view_frame)
+            self.display_frame(self.game.view_frame, None)
 
             menu_prompt = """
             1. Select and Play
@@ -166,10 +168,18 @@ class ConsolePlay:
         elif option == 3:
             print("Back to Menu...")
 
-    def display_frame(self, frame):
-        def hex_print(value, k=False):
+    def display_frame(self, frame, scell):
+        def hex_print(value, c=None, k=False):
             if k and value == 0:
-                return "."
+                if scell is not None and c is not None:
+                    if c[0] == scell[0] and c[1] == scell[1]:
+                        return '_'
+                    elif self.game.scell_map[c[0]][c[1]]:
+                        return '*'
+                    else:
+                        return '.'
+                else:
+                    return '.'
             elif value < 10:
                 return value
             else:
@@ -207,7 +217,7 @@ class ConsolePlay:
             for ci, cell in enumerate(row):
                 if ci and not ci % self.game.map_size:
                     print("|", end="  ")
-                print(hex_print(cell, True), end="  ")
+                print(hex_print(cell, (ri, ci), True), end="  ")
             print("||")
 
         borders()

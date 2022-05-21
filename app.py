@@ -11,3 +11,5 @@ while True:
         game.options()
     elif option == 4:
         game.exit()
+
+# 1234567890-=!@#$%^&*()_+[]\;',./\{}|:">?<
