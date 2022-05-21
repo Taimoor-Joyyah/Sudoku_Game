@@ -102,3 +102,13 @@ class Sudoku:
                     return frame
         else:
             return None
+
+    def hint(self):
+        cells = []
+        for r in range(self.map_size ** 2):
+            for c in range(self.map_size ** 2):
+                if not self.view_frame[r][c]:
+                    cells.append((r, c))
+        cell = random.choice(cells)
+        value = self.solution_map[cell[0]][cell[1]]
+        return cell, value

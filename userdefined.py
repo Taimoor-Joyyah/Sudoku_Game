@@ -29,7 +29,7 @@ def select_numeric_option(num_range: (int, int), input_prompt: str | None,
                 print(invalid_prompt)
 
 
-# 2x3x4 = 6x4 = 24
+# 2x3x4 = 6x4 = 24 # UNCOMPLETED Function............
 def list_composition(llist: [[[...]]], r_size: tuple):
     def depth(l, s=None):
         if s is None:

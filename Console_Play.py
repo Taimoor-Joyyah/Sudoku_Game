@@ -11,11 +11,10 @@ class ConsolePlay:
         menu_prompt = """
         1. Play Game
         2. Select Random Map
-        3. Create Map
-        4. Options
-        5. Exit
+        3. Options
+        4. Exit
         """
-        return select_numeric_option((1, 5), "OPTION > ", menu_prompt, "INVALID OPTION !!!")
+        return select_numeric_option((1, 4), "OPTION > ", menu_prompt, "INVALID OPTION !!!")
 
     @staticmethod
     def hex_dec(value: str, v=False):
@@ -54,25 +53,34 @@ class ConsolePlay:
             else:
                 print("INVALID INPUT !!!")
 
+    @staticmethod
+    def print_state(cell, value, hint, life):
+        print(f"Cell: {cell}, Value: {value}, Hints: {hint}, Life: {life}")
+
     def play(self):
-        cell = value = None
+        cell = value = option = None
+        hints_rem = (3 - self.game.difficulty // 3) * (self.game.map_size - 1)
+        lives = (3 - self.game.difficulty // 3) * (self.game.map_size - 1)
         while True:
-            menu_prompt = """
+            if option is not None:
+                self.display_frame(self.game.view_frame)
+                self.print_state(cell, value, hints_rem, lives)
+
+            menu_prompt = f"""
             1. Select Cell
             2. Select Value
             3. Input Value
             4. Empty Cell
-            5. Leave Game 
+            5. Take Hint
+            6. Leave Game 
             """
 
-            option = select_numeric_option((1, 5), "OPTION > ", menu_prompt, "INVALID INPUT !!!")
+            option = select_numeric_option((1, 6), "OPTION > ", menu_prompt, "INVALID INPUT !!!")
 
             if option == 1:
                 cell = self.select_cell()
-                self.display_frame(self.game.view_frame)
             elif option == 2:
                 value = self.select_value()
-                self.display_frame(self.game.view_frame)
             elif option == 3:
                 if cell is None:
                     print("CELL NOT SELECTED !!!")
@@ -81,23 +89,36 @@ class ConsolePlay:
                 elif self.game.input_value(cell, value):
                     print(f"Taken {value} at {cell}")
                     self.display_frame(self.game.view_frame)
+                    self.print_state(cell, value, hints_rem, lives)
                     if self.game.view_frame == self.game.solution_map:
                         break
                 else:
                     print(f"{value} does not statisfy at {cell} !!!")
+                    lives -= 1
+                    if lives:
+                        print(f"{lives} Lives Remaining")
+                    else:
+                        print("No Life Remaining !!!")
+                        print("Game OVER !!!")
+                        return False
             elif option == 4:
                 if cell is None:
                     print("CELL NOT SELECTED !!!")
                 else:
                     self.game.empty_cell(cell)
-                    self.display_frame(self.game.view_frame)
             elif option == 5:
+                if hints_rem:
+                    hint = self.game.hint()
+                    print(f"HINT: {hint[1]} at {hint[0]}")
+                    hints_rem -= 1
+                    print(f"{hints_rem} Hint(s) Remaining !")
+                else:
+                    print("No Hint Remaining !!!")
+            elif option == 6:
                 print("Leaving Game...")
-                return
+                return True
         print("Game WON")
-
-    def create_map(self):
-        print("Creating Map")
+        return True
 
     def start_game(self, select=False):
         self.game.generate_maps()
@@ -111,26 +132,20 @@ class ConsolePlay:
         while True:
             self.display_frame(self.game.view_frame)
 
-            print("""
+            menu_prompt = """
             1. Select and Play
             2. Next Map
             3. Back to Menu
-            """)
+            """
 
-            while True:
-                option = input("OPTION > ")
+            option = select_numeric_option((1, 3), "OPTION > ", menu_prompt, "INVALID OPTION !!!")
 
-                if option and option.isnumeric() and 1 <= int(option) <= 4:
-                    break
-                else:
-                    print("INVALID OPTION!!!")
-
-            if option == '1':
+            if option == 1:
                 return True
-            elif option == '2':
+            elif option == 2:
                 print("NEXT MAP...")
                 self.game.generate_maps()
-            elif option == '3':
+            elif option == 3:
                 print("Back to Menu...")
                 return False
 
@@ -164,9 +179,10 @@ class ConsolePlay:
             for n in range(self.game.map_size):
                 if not n:
                     print("   ", end="")
-                print("+" + "-" * (self.game.map_size * 3 + (2 if 0 < n < (self.game.map_size - 1) else 3)), end="")
+                print("+" + "=" * (self.game.map_size * 3 + (2 if 0 < n < (self.game.map_size - 1) else 3)), end="")
             print("+")
 
+        print()
         for i in range(self.game.map_size ** 2):
             if not i:
                 print("       ", end="")
